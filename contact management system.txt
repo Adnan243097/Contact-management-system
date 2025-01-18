@@ -1,0 +1,124 @@
+#include <stdio.h>
+#include <string.h>
+
+#define MAX_CONTACTS 100
+
+// Structure to represent a contact
+struct Contact {
+    char name[50];
+    char phone[15];
+    char email[50];
+};
+
+// Function to display a contact
+void displayContact(struct Contact contact) {
+    printf("Name: %s\n", contact.name);
+    printf("Phone: %s\n", contact.phone);
+    printf("Email: %s\n", contact.email);
+}
+
+// Function to search for a contact by name
+void searchContact(struct Contact contacts[], int numContacts) {
+    char searchName[50];
+    printf("Enter the name to search: ");
+    scanf(" %[^\n]", searchName);
+
+    int found = 0;
+    for (int i = 0; i < numContacts; i++) {
+        if (strcasecmp(contacts[i].name, searchName) == 0) {
+            printf("Contact found:\n");
+            displayContact(contacts[i]);
+            found = 1;
+            break;
+        }
+    }
+
+    if (!found) {
+        printf("Contact not found.\n");
+    }
+}
+
+// Function to delete a contact by name
+void deleteContact(struct Contact contacts[], int *numContacts) {
+    char deleteName[50];
+    printf("Enter the name to delete: ");
+    scanf(" %[^\n]", deleteName);
+
+    int found = 0;
+    for (int i = 0; i < *numContacts; i++) {
+        if (strcasecmp(contacts[i].name, deleteName) == 0) {
+            found = 1;
+            for (int j = i; j < *numContacts - 1; j++) {
+                contacts[j] = contacts[j + 1]; // Shift contacts left
+            }
+            (*numContacts)--;
+            printf("Contact deleted successfully.\n");
+            break;
+        }
+    }
+
+    if (!found) {
+        printf("Contact not found.\n");
+    }
+}
+
+int main() {
+    struct Contact contacts[MAX_CONTACTS];
+    int numContacts = 0;
+    int choice;
+
+    while (1) {
+        printf("\nContact Management System\n");
+        printf("1. Add Contact\n");
+        printf("2. View Contacts\n");
+        printf("3. Search Contact\n");
+        printf("4. Delete Contact\n");
+        printf("5. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                if (numContacts < MAX_CONTACTS) {
+                    struct Contact newContact;
+                    printf("Enter Name: ");
+                    scanf(" %[^\n]", newContact.name);
+                    printf("Enter Phone: ");
+                    scanf(" %[^\n]", newContact.phone);
+                    printf("Enter Email: ");
+                    scanf(" %[^\n]", newContact.email);
+
+                    contacts[numContacts] = newContact;
+                    numContacts++;
+                    printf("Contact added successfully.\n");
+                } else {
+                    printf("Contact limit reached. Cannot add more contacts.\n");
+                }
+                break;
+            case 2:
+                if (numContacts == 0) {
+                    printf("No contacts available.\n");
+                } else {
+                    printf("Contacts List:\n");
+                    for (int i = 0; i < numContacts; i++) {
+                        printf("Contact %d:\n", i + 1);
+                        displayContact(contacts[i]);
+                    }
+                }
+                break;
+            case 3:
+                searchContact(contacts, numContacts);
+                break;
+            case 4:
+                deleteContact(contacts, &numContacts);
+                break;
+            case 5:
+                printf("Exiting the Contact Management System.\n");
+                return 0;
+            default:
+                printf("Invalid choice. Please try again.\n");
+        }
+    }
+
+    return 0;
+}
